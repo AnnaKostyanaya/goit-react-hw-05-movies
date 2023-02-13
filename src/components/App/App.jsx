@@ -5,8 +5,8 @@ import { getMovieByKeyword } from "../../service/moviesAPI";
 import { nanoid } from 'nanoid';
 
 const SharedLayout = lazy(() => import("../SharedLayout/SharedLayout"));
-const Home = lazy(() => import("../pages/Home"));
-const Movies = lazy(() => import("../pages/Movies"));
+const Home = lazy(() => import("../pages/Home/Home"));
+const Movies = lazy(() => import("../pages/Movies/Movies"));
 const MovieDetails = lazy(() => import("../MovieDetails/MovieDetails"));
 const Cast = lazy(() => import("../Cast/Cast"));
 const Reviews = lazy(() => import("../Reviews/Reviews"));
@@ -33,13 +33,13 @@ useEffect(() => {
       }
       }
       )
-      setMovies([...movies, ...newMovie]);
+      setMovies(prevState => [...prevState, ...newMovie]);
       }) 
     } catch (error) {
       console.log(error);
     } 
   }
-}, [searchWord, pageNumber, movies]);
+}, [searchWord, pageNumber]);
 
 const formSubmitHandler = (keyWord) => {
   if (searchWord !== keyWord) {
@@ -66,8 +66,8 @@ const lastPageDef = () => {
       <Routes>
         <Route path="/" element={<SharedLayout />} >
           <Route index element={<Home />} />
-          <Route path="movies" element={<Movies onSubmit={formSubmitHandler} onClick={handleIncrement} data={movies} pageNumber={pageNumber} lastPage={lastPageDef()}/>} />
-          <Route path="movies/:movieId" element={<MovieDetails />} >
+          <Route path="/movies" element={<Movies onSubmit={formSubmitHandler} onClick={handleIncrement} data={movies} pageNumber={pageNumber} lastPage={lastPageDef()}/>} />
+          <Route path="/movies/:movieId" element={<MovieDetails />} >
               <Route path="cast" element={<Cast />} />
               <Route path="reviews" element={<Reviews />} />
           </Route>

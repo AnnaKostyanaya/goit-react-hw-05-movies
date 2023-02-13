@@ -3,7 +3,7 @@ import {useSearchParams} from "react-router-dom";
 import { useState, useEffect} from "react";
 import { Searchcomponent, SearchForm, SearchFormButtonLabel, SearchFormButton, SearchFormInput, List, Photo, Name, Item, Error } from './Movies.styled';
 import { FaSearch } from 'react-icons/fa';
-import { Button } from "../Button/Button";
+import { Button } from "../../Button/Button";
 import PropTypes from 'prop-types';
 
 const Movies = ({ onSubmit, onClick, data, pageNumber, lastPage }) => {
@@ -15,6 +15,10 @@ const search = searchParams.get("search");
 
 useEffect(() => {
     setMovies([...data]);
+
+    return () => {
+        setMovies([]);
+    };
 }, [data]);
 
 const handleSubmit = event => {
@@ -66,6 +70,17 @@ return (
 
 Movies.propTypes = {
     onSubmit: PropTypes.func.isRequired,
+    onClick: PropTypes.func.isRequired,
+    pageNumber: PropTypes.number.isRequired,
+    lastPage: PropTypes.number.isRequired,
+    data: PropTypes.arrayOf(
+        PropTypes.shape({
+            realId: PropTypes.string.isRequired,
+            id: PropTypes.number.isRequired,
+            title: PropTypes.string.isRequired,
+            poster_path: PropTypes.string.isRequired,
+    }).isRequired
+    ).isRequired,
 };
 
 export default Movies;

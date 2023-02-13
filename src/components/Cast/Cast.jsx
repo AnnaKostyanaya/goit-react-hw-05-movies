@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getCreditsById } from "../../service/moviesAPI";
 import { List, Photo, Item, Name, Character, Popularity, Caption } from './Cast.styled';
+import { nanoid } from 'nanoid'
 
 
 const Cast = () => {
@@ -13,6 +14,7 @@ useEffect(() => {
         getCreditsById(movieId).then( response => {
             const movieCast = response.map(({character, name, popularity, profile_path}) => {
                 return {
+                    realId: nanoid(),
                     character: character === "" ? "No information" : character,
                     name: name === "" ? "No information" : name,
                     popularity: popularity === "" ? "No information" : popularity,
@@ -31,7 +33,7 @@ return (
 <h2>Cast</h2>
     <List>
         {cast.map((actor) => (
-        <Item key={actor.name}>
+        <Item key={actor.realId}>
             <Character><Caption>Character:</Caption>{actor.character}</Character>
             <Name><Caption>Name:</Caption>{actor.name}</Name>
             <Popularity><Caption>Popularity:</Caption>{actor.popularity}</Popularity>
