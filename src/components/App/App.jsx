@@ -39,7 +39,7 @@ useEffect(() => {
       console.log(error);
     } 
   }
-}, [searchWord, pageNumber]);
+}, [searchWord, pageNumber, movies]);
 
 const formSubmitHandler = (keyWord) => {
   if (searchWord !== keyWord) {

@@ -23,7 +23,7 @@ try { getTrends(pageNumber).then( resp => {
 } catch (error) {
     console.log(error);
 }
-}, [pageNumber]);
+}, [pageNumber, movies]);
 
 const handleIncrement = () => {
     setPageNumber(PrevNumber => PrevNumber + 1);

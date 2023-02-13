@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getReviewById } from "../../service/moviesAPI";
 import { Photo, Item, User, Name, Text } from './Reviews.styled';
