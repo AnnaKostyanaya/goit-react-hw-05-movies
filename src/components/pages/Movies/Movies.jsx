@@ -4,17 +4,20 @@ import { useState, useEffect} from "react";
 import { Searchcomponent, SearchForm, SearchFormButtonLabel, SearchFormButton, SearchFormInput, List, Photo, Name, Item, Error } from './Movies.styled';
 import { FaSearch } from 'react-icons/fa';
 import { Button } from "../../Button/Button";
+import Loader from "../../Loader/Loader";
 import PropTypes from 'prop-types';
 
 const Movies = ({ onSubmit, onClick, data, pageNumber, lastPage }) => {
 const location = useLocation();
 
 const [movies, setMovies] = useState([]);
+const [status, setStatus] = useState("");
 const [searchParams, setSearchParams] = useSearchParams();
 const search = searchParams.get("search");
 
 useEffect(() => {
     setMovies([...data]);
+    setStatus("OK");
 
     return () => {
         setMovies([]);
@@ -28,6 +31,7 @@ const handleSubmit = event => {
         return;
     }
     onSubmit(search);
+    setStatus("LOADING");
 };
 
 return (
@@ -64,6 +68,7 @@ return (
         <Button text={"Load more"} type="button" onClick={onClick} />}
     {(pageNumber === lastPage && movies.length > 0) &&
         <Error>You've reached the end of search results.</Error>}
+    {status === "LOADING" &&  <Loader />}
 </>
 );
 }

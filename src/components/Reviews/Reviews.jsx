@@ -1,27 +1,34 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Loader from "../Loader/Loader";
 import { getReviewById } from "../../service/moviesAPI";
 import { Photo, Item, User, Name, Text } from './Reviews.styled';
 
 const Reviews = () => {
     const { movieId } = useParams();
     const [review, setReview] = useState([]);
+    const [status, setStatus] = useState("");
 
 useEffect(() => {
-    getReviewById(movieId).then(response => {
-    const movieReview = response.map(({author_details, content, created_at}) => {
-        if (author_details.avatar_path === null || (author_details.avatar_path).includes("/https")) {
-                author_details.avatar_path = "https://upload.wikimedia.org/wikipedia/commons/1/12/User_icon_2.svg";
+    setStatus("LOADING");
+    try {  getReviewById(movieId).then(response => {
+        const movieReview = response.map(({author_details, content, created_at}) => {
+            if (author_details.avatar_path === null || (author_details.avatar_path).includes("/https")) {
+                    author_details.avatar_path = "https://upload.wikimedia.org/wikipedia/commons/1/12/User_icon_2.svg";
+                    return {author_details, content, created_at};
+                } 
+            else {
+                author_details.avatar_path = `https://image.tmdb.org/t/p/original/${author_details.avatar_path}`;
                 return {author_details, content, created_at};
-            } 
-        else {
-            author_details.avatar_path = `https://image.tmdb.org/t/p/original/${author_details.avatar_path}`;
-            return {author_details, content, created_at};
+            }
         }
+        )
+        setReview([...movieReview]);
+        setStatus("OK");
+        }) 
+    } catch (error) {
+        setStatus("ERROR");
     }
-    )
-    setReview([...movieReview]);
-    }) 
 }, [movieId]);
 
 return (
@@ -40,6 +47,7 @@ return (
     </ul>
     {(review.length === 0) &&
     <p>There are no reviews.</p>}
+    {status === "LOADING" &&  <Loader />}
 </>
 );
 };

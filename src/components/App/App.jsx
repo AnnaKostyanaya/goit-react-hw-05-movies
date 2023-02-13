@@ -22,6 +22,7 @@ useEffect(() => {
   if (searchWord === "") {
     return;
   } else {
+    
     const movie = getMovieByKeyword(searchWord, pageNumber);
     try { movie.then( resp => { 
       setPageTotal(resp.total_results);

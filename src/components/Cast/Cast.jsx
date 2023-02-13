@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Loader from "../Loader/Loader";
 import { getCreditsById } from "../../service/moviesAPI";
 import { List, Photo, Item, Name, Character, Popularity, Caption } from './Cast.styled';
 import { nanoid } from 'nanoid'
@@ -8,10 +9,11 @@ import { nanoid } from 'nanoid'
 const Cast = () => {
     const { movieId } = useParams();
     const [cast, setCast] = useState([]);
+    const [status, setStatus] = useState("");
 
 useEffect(() => {
-    try {
-        getCreditsById(movieId).then( response => {
+    setStatus("LOADING");
+    try { getCreditsById(movieId).then( response => {
             const movieCast = response.map(({character, name, popularity, profile_path}) => {
                 return {
                     realId: nanoid(),
@@ -22,9 +24,10 @@ useEffect(() => {
                 }
             })
             setCast([...movieCast]);
+            setStatus("OK");
         })  
     } catch (error) {
-        console.log(error);
+        setStatus("ERROR");
     }
 }, [movieId]);
 
@@ -40,9 +43,10 @@ return (
             <Photo src={actor.profile_path} alt="actor"/>
         </Item>
         ))}
-        {(cast.length === 0) &&
-        <p>No information about the cast.</p>}
     </List>
+    {(cast.length === 0) &&
+        <p>No information about the cast.</p>}
+    {status === "LOADING" &&  <Loader />}
 </>
 );
 };

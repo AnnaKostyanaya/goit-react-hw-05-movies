@@ -2,27 +2,31 @@ import { useState, useEffect } from 'react';
 import { getTrends } from "../../../service/moviesAPI";
 import TrendingList from "../../TrendingList/TrendingList";
 import { Button } from "../../Button/Button";
+import Loader from "../../Loader/Loader";
 import { nanoid } from 'nanoid'
 import { List, Container } from './Home.styled';
 import { useLocation } from "react-router-dom";
 
 const Home = () => {
 const [movies, setMovies] = useState([]);
+const [status, setStatus] = useState("");
 const [pageNumber, setPageNumber] = useState(1);
 
 const location = useLocation();
     
 useEffect(() => {
-try { getTrends(pageNumber).then( resp => {
-    const moviesTrending = resp.map(({id, title, poster_path}) => {
-        return {realId: nanoid(), id, title, poster_path: `https://image.tmdb.org/t/p/original/${poster_path}`};
+    setStatus("LOADING");
+    try { 
+        getTrends(pageNumber).then( resp => {
+            const moviesTrending = resp.map(({id, title, poster_path}) => {
+                return {realId: nanoid(), id, title, poster_path: `https://image.tmdb.org/t/p/original/${poster_path}`};
+            })
+            setMovies(prevState => [...prevState, ...moviesTrending]);
+            setStatus("OK");
+        }) 
+    } catch (error) {
+        setStatus("ERROR");
     }
-    )
-    setMovies(prevState => [...prevState, ...moviesTrending]);
-    }) 
-} catch (error) {
-    console.log(error);
-}
 }, [pageNumber]);
 
 
@@ -41,7 +45,7 @@ return (
         </List>}
         {(movies.length > 0) &&
         <Button text={"Load more"} type="button" onClick={handleIncrement} />}
-
+        {status === "LOADING" &&  <Loader />}
     </Container>
 );
 };
