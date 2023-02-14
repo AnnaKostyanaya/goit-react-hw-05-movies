@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import { getReviewById } from "../../service/moviesAPI";
 import { Photo, Item, User, Name, Text } from './Reviews.styled';
+import PropTypes from 'prop-types';
 
 const Reviews = () => {
     const { movieId } = useParams();
@@ -12,7 +13,7 @@ const Reviews = () => {
 useEffect(() => {
     setStatus("LOADING");
     try {  getReviewById(movieId).then(response => {
-        const movieReview = response.map(({author_details, content, created_at}) => {
+        const movieReview = response.map(({author_details, content, created_at, state}) => {
             if (author_details.avatar_path === null || (author_details.avatar_path).includes("/https")) {
                     author_details.avatar_path = "https://upload.wikimedia.org/wikipedia/commons/1/12/User_icon_2.svg";
                     return {author_details, content, created_at};
@@ -50,6 +51,10 @@ return (
     {status === "LOADING" &&  <Loader />}
 </>
 );
+};
+
+Reviews.propTypes = {
+    state: PropTypes.object,
 };
 
 export default Reviews;

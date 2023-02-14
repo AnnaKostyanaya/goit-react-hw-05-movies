@@ -3,10 +3,11 @@ import { useParams } from "react-router-dom";
 import Loader from "../Loader/Loader";
 import { getCreditsById } from "../../service/moviesAPI";
 import { List, Photo, Item, Name, Character, Popularity, Caption } from './Cast.styled';
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid';
+import PropTypes from 'prop-types';
 
 
-const Cast = () => {
+const Cast = ({ state }) => {
     const { movieId } = useParams();
     const [cast, setCast] = useState([]);
     const [status, setStatus] = useState("");
@@ -14,7 +15,7 @@ const Cast = () => {
 useEffect(() => {
     setStatus("LOADING");
     try { getCreditsById(movieId).then( response => {
-            const movieCast = response.map(({character, name, popularity, profile_path}) => {
+            const movieCast = response.map(({character, name, popularity, profile_path, state}) => {
                 return {
                     realId: nanoid(),
                     character: character === "" ? "No information" : character,
@@ -49,6 +50,10 @@ return (
     {status === "LOADING" &&  <Loader />}
 </>
 );
+};
+
+Cast.propTypes = {
+    state: PropTypes.object,
 };
 
 export default Cast;

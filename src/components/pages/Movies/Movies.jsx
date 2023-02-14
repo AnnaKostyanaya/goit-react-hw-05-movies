@@ -5,34 +5,72 @@ import { Searchcomponent, SearchForm, SearchFormButtonLabel, SearchFormButton, S
 import { FaSearch } from 'react-icons/fa';
 import { Button } from "../../Button/Button";
 import Loader from "../../Loader/Loader";
-import PropTypes from 'prop-types';
+import { getMovieByKeyword } from "../../../service/moviesAPI";
+import { nanoid } from 'nanoid';
 
-const Movies = ({ onSubmit, onClick, data, pageNumber, lastPage }) => {
+const Movies = () => {
+
 const location = useLocation();
-
 const [movies, setMovies] = useState([]);
 const [status, setStatus] = useState("");
 const [searchParams, setSearchParams] = useSearchParams();
 const search = searchParams.get("search");
+const [pageNumber, setPageNumber] = useState(1);
+const [pageTotal, setPageTotal] = useState(1);
+const [searchWord, setSearchWord] = useState("");
 
 useEffect(() => {
-    setMovies([...data]);
+if (search === "") {
+return;
+} else {
+const movie = getMovieByKeyword(search, pageNumber);
+try { movie.then( resp => { 
+    setPageTotal(resp.total_results);
+    const newMovie = resp.results.map(({id, title, poster_path}) => {
+    if (poster_path === null) {
+    return {realId: nanoid(), id, title, poster_path: `https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg`};
+    } else {  
+    return {realId: nanoid(), id, title, poster_path: `https://image.tmdb.org/t/p/original/${poster_path}`};
+    }
+    }
+    )
+    setMovies(prevState => [...prevState, ...newMovie]);
     setStatus("OK");
+    }) 
+} catch (error) {
+    setStatus("ERROR");
+} 
+}
+}, [search, pageNumber]);
 
-    return () => {
-        setMovies([]);
-    };
-}, [data]);
+
+const handleIncrement = () => {
+    setPageNumber(PrevNumber => PrevNumber + 1);
+}
+
+const lastPageDef = () => {
+    let lastPage = Number(pageTotal % 12);
+    if (lastPage === 0) {
+        return lastPage = Number(pageTotal / 12);
+    } else {
+        return lastPage = Number.parseInt(pageTotal / 12) + 1;
+    }
+}  
 
 const handleSubmit = event => {
     event.preventDefault();
-    if (search.trim() === '') {
+    if (searchWord.trim() === '') {
         alert('Enter a search word.');
         return;
     }
-    onSubmit(search);
-    setStatus("LOADING");
+    if (searchWord !== search) {
+        setMovies([]);
+        setSearchParams({ search: searchWord })
+        setStatus("LOADING");
+        setSearchWord("");
+        } 
 };
+
 
 return (
 <>
@@ -44,9 +82,9 @@ return (
                 autoComplete="off"
                 autoFocus
                 placeholder="Search movies"
-                name="search"
-                value={search || ''}
-                onChange={event => setSearchParams({ search: event.target.value.toLowerCase() })}
+                name="searchWord"
+                value={searchWord}
+                onChange={event => setSearchWord(event.target.value.toLowerCase())}
             />
             <SearchFormButton type="submit" className="button">
                 <SearchFormButtonLabel className="button-label">Search</SearchFormButtonLabel>
@@ -64,28 +102,13 @@ return (
             </Item>
         ))}
     </List>
-    {((movies.length > 0) && (pageNumber < lastPage)) &&
-        <Button text={"Load more"} type="button" onClick={onClick} />}
-    {(pageNumber === lastPage && movies.length > 0) &&
+    {((movies.length > 0) && (pageNumber < lastPageDef())) &&
+        <Button text={"Load more"} type="button" onClick={handleIncrement} />}
+    {(pageNumber === lastPageDef() && movies.length > 0) &&
         <Error>You've reached the end of search results.</Error>}
     {status === "LOADING" &&  <Loader />}
 </>
 );
 }
-
-Movies.propTypes = {
-    onSubmit: PropTypes.func.isRequired,
-    onClick: PropTypes.func.isRequired,
-    pageNumber: PropTypes.number.isRequired,
-    lastPage: PropTypes.number.isRequired,
-    data: PropTypes.arrayOf(
-        PropTypes.shape({
-            realId: PropTypes.string.isRequired,
-            id: PropTypes.number.isRequired,
-            title: PropTypes.string.isRequired,
-            poster_path: PropTypes.string.isRequired,
-    }).isRequired
-    ).isRequired,
-};
 
 export default Movies;

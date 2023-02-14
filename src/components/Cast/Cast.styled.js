@@ -9,7 +9,7 @@ export const List = styled.ul`
 `
 
 export const Photo = styled.img`
-width: 170px;
+width: 200px;
 heigth: 255px;
 `
 export const Item = styled.li`
@@ -18,21 +18,21 @@ margin: 10px;
 `
 
 export const Name = styled.p`
-max-width: 180px;
+max-width: 200px;
 font-size: 14px;
 text-decoration: none;
 color: black;
 margin-bottom: 5px;
 `
 export const Character = styled.p`
-max-width: 180px;
+max-width: 200px;
 font-size: 14px;
 text-decoration: none;
 color: black;
 margin-bottom: 5px;
 `
 export const Popularity = styled.p`
-max-width: 180px;
+max-width: 200px;
 font-size: 14px;
 text-decoration: none;
 color: black;

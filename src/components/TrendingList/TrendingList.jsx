@@ -14,7 +14,7 @@ const TrendingList = ( { id, title, poster_path, state } ) => {
 }
 
 TrendingList.propTypes = {
-    state: PropTypes.object.isRequired,
+    state: PropTypes.object,
     id: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
     poster_path: PropTypes.string.isRequired,

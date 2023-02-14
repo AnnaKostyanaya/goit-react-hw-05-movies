@@ -14,7 +14,8 @@ const MovieDetails = () => {
     const [score, setScore] = useState('');
     const { movieId } = useParams();
     const location = useLocation();
-    const backLinkHref = location.state?.from ?? "/movies";
+    const from = location.state?.from || "/";
+
 
 useEffect(() => {
 try { getMovieById(movieId).then(response => {
@@ -36,7 +37,7 @@ try { getMovieById(movieId).then(response => {
 
 return (
 <Container>
-    <Backward to={backLinkHref}>Back to movies</Backward>
+    <Backward to={from}>Back to movies</Backward>
     <h2>{title}</h2>
     <p><Text>Date:</Text> {date}</p>  
     <p><Text>User Score:</Text> {score}</p>
@@ -48,10 +49,10 @@ return (
 
     <List>
         <Item>
-            <Link to="cast">Read about a cast</Link>
+            <Link to="cast" state={{from}}>Read about a cast</Link>
         </Item>
         <Item>
-            <Link to="reviews">Get to know the reviews</Link>
+            <Link to="reviews" state={{from}}>Get to know the reviews</Link>
         </Item>
     </List>
     <Suspense fallback={<div>Loading...</div>}>
